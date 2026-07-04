@@ -31,7 +31,8 @@ export function loginUrlFor(returnPath = "/"): string {
 export const authConfig = {
   jwksUrl: process.env.AUTH_JWKS_URL!,
   loginUrl: loginUrlFor("/"),
-  logoutUrl: process.env.AUTH_LOGOUT_URL!,
+  // 登出：夾帶 redirect_uri 回到自己首頁，登出後留在 T-Msg 而不是被丟到 auth。
+  logoutUrl: `${process.env.AUTH_LOGOUT_URL}?redirect_uri=${encodeURIComponent(self)}`,
   selfUrl: self,
   // 不同意使用者守則時導回的門戶大廳。
   portalUrl: process.env.PORTAL_URL!,

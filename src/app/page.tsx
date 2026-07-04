@@ -1,7 +1,7 @@
 // 學生傳訊頁：未登入導 SSO；封鎖/冷卻中顯示狀態卡，否則給傳訊表單。
 import Link from "next/link";
 import { redirect } from "next/navigation";
-import { Ban, Clock, MessagesSquare } from "lucide-react";
+import { Ban, Clock, LogIn, MessagesSquare } from "lucide-react";
 import { getSession } from "@/lib/tpass-auth";
 import { isAdmin } from "@/config/admin";
 import { authConfig, loginUrlFor } from "@/config/auth";
@@ -12,10 +12,48 @@ import { MAX_CONTENT_LENGTH } from "@/lib/constants";
 import { MessageForm } from "@/components/MessageForm";
 import { Guidelines } from "@/components/Guidelines";
 import { PortalLink } from "@/components/common/PortalLink";
-import { Badge } from "@/components/ui/primitives";
+import { Badge, Button } from "@/components/ui/primitives";
 
-export default async function HomePage() {
+function LoggedOutNotice() {
+  return (
+    <div className="min-h-full flex flex-col">
+      <header className="sticky top-0 z-50 h-16 bg-background/90 backdrop-blur-md border-b-2 border-foreground/20">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 h-full flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <PortalLink href={authConfig.portalUrl} />
+            <span className="font-mono text-lg font-extrabold tracking-tight text-foreground">
+              T<span className="text-primary">-</span>Msg
+            </span>
+          </div>
+        </div>
+      </header>
+
+      <main className="max-w-6xl mx-auto px-4 sm:px-6 py-24 flex flex-col items-center text-center">
+        <span className="flex h-16 w-16 items-center justify-center rounded-2xl border-2 border-foreground bg-card text-foreground shadow-[4px_4px_0_0_var(--color-foreground)]">
+          <LogIn className="h-8 w-8" />
+        </span>
+        <h1 className="mt-6 font-extrabold text-2xl tracking-tight">您已登出</h1>
+        <p className="mt-2 font-medium text-muted-foreground">
+          您已安全登出 T-Msg。要繼續使用跨屆傳訊，請重新登入。
+        </p>
+        <a href={authConfig.loginUrl} className="mt-6">
+          <Button variant="primary">使用學校帳號登入</Button>
+        </a>
+      </main>
+    </div>
+  );
+}
+
+export default async function HomePage({
+  searchParams,
+}: {
+  searchParams: Promise<{ logout?: string }>;
+}) {
   const session = await getSession();
+  // logout=1 只是 auth 導回來的畫面提示，不是憑證：只有在 session 確實無效時才採信。
+  const { logout } = await searchParams;
+  const justLoggedOut = !session && logout === "1";
+  if (justLoggedOut) return <LoggedOutNotice />;
   if (!session) redirect(loginUrlFor("/"));
 
   const [status, cooldownHours, webhooks, admin, guidelines] = await Promise.all([
