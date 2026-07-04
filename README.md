@@ -44,3 +44,9 @@ Production smoke：`npm run build && npm run start:https`（憑證見頂層 `scr
 - SSO 驗章照 `src/lib/tpass-auth.ts`（EdDSA 鎖定 + issuer + audience + exp，四鐵則缺一不可），細節見 `tpass-auth/INTEGRATION.md`。
 - 所有網域 / issuer / audience 全部 env 驅動（`src/config/auth.ts`），不寫死。
 - 冷卻用 `UserStatus.nextAllowedAt` 單欄位物化；封鎖 = `bannedAt` + 可空 `banExpiresAt`（null = 永久）。
+- **登出留在本服務**：`src/config/auth.ts` 的 `logoutUrl` 夾帶 `redirect_uri=<自己>`，登出後 auth 會
+  `303` 導回 T-Msg 首頁並帶 `?logout=1`（純畫面提示，不是憑證）。**注意**：`src/app/page.tsx`
+  對一般未登入訪客是直接 `redirect(loginUrlFor("/"))`（本服務沒有可瀏覽的公開頁面），
+  所以特別在這個自動 redirect **之前**攔了一個 `justLoggedOut` 分支（`!session && logout==='1'`），
+  渲染 `LoggedOutNotice`（仿 `components/common/Forbidden.tsx` 版型）讓使用者能先看到「已登出」畫面、
+  自己按登入，而不是登出後被瞬間彈回 Google 登入頁。改動這段邏輯時務必保留這個攔截順序。
