@@ -1,0 +1,62 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// 管理員白名單（超管種子在 env SUPER_ADMIN_EMAILS，不進這張表）。
+model Admin {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  addedBy   String
+  createdAt DateTime @default(now())
+}
+
+// Google Chat incoming webhook 清單，全由 admin UI 管理。
+// url 內含 key/token secret：不進 git、不進 log，UI 顯示要截斷。
+model Webhook {
+  id        String   @id @default(cuid())
+  name      String
+  url       String
+  enabled   Boolean  @default(true)
+  createdBy String
+  createdAt DateTime @default(now())
+}
+
+// 每一則送出的訊息（審計紀錄，投遞失敗也保留）。
+model Message {
+  id          String   @id @default(cuid())
+  senderSub   String
+  senderEmail String
+  senderName  String
+  content     String
+  deliveries  Json // [{ webhookId, name, ok, status?, error? }]
+  createdAt   DateTime @default(now())
+
+  @@index([senderSub, createdAt])
+  @@index([createdAt])
+}
+
+// 每個使用者一列的狀態：冷卻閘門 + 封鎖。
+// 冷卻：nextAllowedAt 為 null 或已過 = 可傳；送出時原子性寫入 now + cooldownHours。
+// 封鎖：bannedAt 非 null 即封鎖中；banExpiresAt null = 永久。
+model UserStatus {
+  sub           String    @id // JWT sub
+  email         String
+  name          String
+  nextAllowedAt DateTime?
+  bannedAt      DateTime?
+  banExpiresAt  DateTime?
+  banReason     String?
+  bannedBy      String?
+  updatedAt     DateTime  @updatedAt
+}
+
+// 全域設定 key-value："cooldownHours"（預設 24）| "bannedWords"（換行分隔）。
+model Setting {
+  key   String @id
+  value String
+}
