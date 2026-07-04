@@ -11,6 +11,7 @@ import { activeBan, cooldownRemainingMs, formatRemaining } from "@/lib/status";
 import { MAX_CONTENT_LENGTH } from "@/lib/constants";
 import { MessageForm } from "@/components/MessageForm";
 import { Guidelines } from "@/components/Guidelines";
+import { PortalLink } from "@/components/common/PortalLink";
 import { Badge } from "@/components/ui/primitives";
 
 export default async function HomePage() {
@@ -36,9 +37,12 @@ export default async function HomePage() {
     <div className="min-h-full flex flex-col">
       <header className="sticky top-0 z-50 h-16 bg-background/90 backdrop-blur-md border-b-2 border-foreground/20">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 h-full flex items-center justify-between">
-          <span className="font-mono text-lg font-extrabold tracking-tight text-foreground">
-            T<span className="text-primary">-</span>Msg
-          </span>
+          <div className="flex items-center gap-3">
+            <PortalLink href={authConfig.portalUrl} />
+            <span className="font-mono text-lg font-extrabold tracking-tight text-foreground">
+              T<span className="text-primary">-</span>Msg
+            </span>
+          </div>
           <div className="flex items-center gap-3">
             {admin && (
               <Link
