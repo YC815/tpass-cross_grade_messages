@@ -7,6 +7,7 @@ const REQUIRED = [
   "AUTH_LOGIN_URL",
   "AUTH_LOGOUT_URL",
   "MSG_SELF_URL",
+  "PORTAL_URL",
   "JWT_ISSUER",
   "JWT_AUDIENCE",
   "TPASS_COOKIE_NAME",
@@ -32,6 +33,8 @@ export const authConfig = {
   loginUrl: loginUrlFor("/"),
   logoutUrl: process.env.AUTH_LOGOUT_URL!,
   selfUrl: self,
+  // 不同意使用者守則時導回的門戶大廳。
+  portalUrl: process.env.PORTAL_URL!,
   issuer: process.env.JWT_ISSUER!,
   audience: process.env.JWT_AUDIENCE!,
   cookieName: process.env.TPASS_COOKIE_NAME!,

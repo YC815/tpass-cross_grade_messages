@@ -6,17 +6,18 @@ import { getSession } from "@/lib/tpass-auth";
 import { isAdmin } from "@/config/admin";
 import { authConfig, loginUrlFor } from "@/config/auth";
 import { prisma } from "@/lib/db";
-import { getCooldownHours } from "@/lib/settings";
+import { getCooldownHours, getUserGuidelines } from "@/lib/settings";
 import { activeBan, cooldownRemainingMs, formatRemaining } from "@/lib/status";
 import { MAX_CONTENT_LENGTH } from "@/lib/constants";
 import { MessageForm } from "@/components/MessageForm";
+import { Guidelines } from "@/components/Guidelines";
 import { Badge } from "@/components/ui/primitives";
 
 export default async function HomePage() {
   const session = await getSession();
   if (!session) redirect(loginUrlFor("/"));
 
-  const [status, cooldownHours, webhooks, admin] = await Promise.all([
+  const [status, cooldownHours, webhooks, admin, guidelines] = await Promise.all([
     prisma.userStatus.findUnique({ where: { sub: session.sub } }),
     getCooldownHours(),
     prisma.webhook.findMany({
@@ -25,6 +26,7 @@ export default async function HomePage() {
       select: { id: true, name: true },
     }),
     isAdmin(session.email),
+    getUserGuidelines(),
   ]);
 
   const ban = activeBan(status);
@@ -68,9 +70,13 @@ export default async function HomePage() {
           </span>
           <h1 className="font-extrabold text-2xl tracking-tight">跨屆傳訊</h1>
         </div>
-        <p className="font-medium text-muted-foreground mb-6">
+        <p className="font-medium text-muted-foreground mb-4">
           寫一則訊息，同步送到各屆的 Google Chat 群組。訊息會以你的名義署名送出。
         </p>
+
+        <div className="mb-6">
+          <Guidelines content={guidelines} portalUrl={authConfig.portalUrl} />
+        </div>
 
         {webhooks.length > 0 && (
           <div className="mb-6 flex flex-wrap items-center gap-2">

@@ -1,13 +1,35 @@
 // 使用者管理：一人一列（有傳過訊息或被動過狀態的才會出現）。
+// 可用 ?q= 依姓名/信箱搜尋。
+import type { Prisma } from "@prisma/client";
 import { RotateCcw, ShieldCheck } from "lucide-react";
 import { prisma } from "@/lib/db";
 import { activeBan, cooldownRemainingMs, formatRemaining } from "@/lib/status";
 import { Badge } from "@/components/ui/primitives";
 import { BanUserForm } from "@/components/admin/BanUserForm";
+import { SearchBar } from "@/components/admin/SearchBar";
 import { resetCooldownAction, unbanUserAction } from "./actions";
 
-export default async function AdminUsersPage() {
-  const users = await prisma.userStatus.findMany({ orderBy: { updatedAt: "desc" } });
+export default async function AdminUsersPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ q?: string }>;
+}) {
+  const { q: rawQ } = await searchParams;
+  const q = (rawQ ?? "").trim();
+
+  const where: Prisma.UserStatusWhereInput = q
+    ? {
+        OR: [
+          { name: { contains: q, mode: "insensitive" } },
+          { email: { contains: q, mode: "insensitive" } },
+        ],
+      }
+    : {};
+
+  const users = await prisma.userStatus.findMany({
+    where,
+    orderBy: { updatedAt: "desc" },
+  });
   const now = new Date();
 
   return (
@@ -16,6 +38,8 @@ export default async function AdminUsersPage() {
       <p className="font-medium text-muted-foreground mb-6">
         重置冷卻、封鎖或解除封鎖。名單只包含使用過傳訊功能的人。
       </p>
+
+      <SearchBar action="/admin/users" defaultValue={q} placeholder="搜尋姓名或信箱…" />
 
       <div className="flex flex-col gap-3">
         {users.map((u) => {
@@ -94,7 +118,7 @@ export default async function AdminUsersPage() {
 
         {users.length === 0 && (
           <p className="text-sm font-medium text-muted-foreground">
-            還沒有人使用過傳訊功能。
+            {q ? "找不到符合的使用者。" : "還沒有人使用過傳訊功能。"}
           </p>
         )}
       </div>

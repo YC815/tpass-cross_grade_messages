@@ -1,10 +1,11 @@
-import { getCooldownHours, getBannedWords } from "@/lib/settings";
+import { getCooldownHours, getBannedWords, getUserGuidelines } from "@/lib/settings";
 import { SettingsForm } from "@/components/admin/SettingsForm";
 
 export default async function AdminSettingsPage() {
-  const [cooldownHours, bannedWords] = await Promise.all([
+  const [cooldownHours, bannedWords, userGuidelines] = await Promise.all([
     getCooldownHours(),
     getBannedWords(),
+    getUserGuidelines(),
   ]);
 
   return (
@@ -15,7 +16,11 @@ export default async function AdminSettingsPage() {
       </p>
 
       <div className="rounded-2xl border-2 border-foreground bg-card p-5 shadow-[4px_4px_0_0_var(--color-foreground)] max-w-xl">
-        <SettingsForm cooldownHours={cooldownHours} bannedWords={bannedWords.join("\n")} />
+        <SettingsForm
+          cooldownHours={cooldownHours}
+          bannedWords={bannedWords.join("\n")}
+          userGuidelines={userGuidelines}
+        />
       </div>
     </div>
   );

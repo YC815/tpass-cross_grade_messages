@@ -84,8 +84,11 @@ export async function sendMessageAction(
     },
   });
 
-  // 使用者已拍板：Chat 訊息署名（開頭附姓名）。
-  const deliveries = await broadcastToWebhooks(webhooks, `${session.name}：\n${content}`);
+  // 使用者已拍板：Chat 訊息署名（訊息最後附上服務名 + 姓名）。
+  const deliveries = await broadcastToWebhooks(
+    webhooks,
+    `${content}\n\n第五屆學生會跨屆代傳訊息服務 - ${session.name}`,
+  );
 
   await prisma.message.update({
     where: { id: message.id },

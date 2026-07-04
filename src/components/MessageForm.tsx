@@ -49,7 +49,7 @@ export function MessageForm({
         name="content"
         required
         maxLength={maxLength}
-        placeholder={`想對三屆同學說什麼？（上限 ${maxLength} 字）`}
+        placeholder="想對同學們說什麼？"
         className="min-h-36"
         disabled={pending}
       />
