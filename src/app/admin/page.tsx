@@ -60,7 +60,7 @@ export default async function AdminMessagesPage({
             >
               <div className="flex flex-wrap items-center gap-2 mb-2">
                 <span className="font-bold">{m.senderName}</span>
-                <span className="font-mono text-[11px] text-muted-foreground">
+                <span className="font-mono text-[11px] text-muted-foreground break-all">
                   {m.senderEmail}
                 </span>
                 <span className="font-mono text-[11px] text-muted-foreground">

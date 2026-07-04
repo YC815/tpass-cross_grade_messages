@@ -52,7 +52,7 @@ export default async function AdminUsersPage({
             >
               <div className="flex flex-wrap items-center gap-2">
                 <span className="font-bold">{u.name}</span>
-                <span className="font-mono text-[11px] text-muted-foreground">{u.email}</span>
+                <span className="font-mono text-[11px] text-muted-foreground break-all">{u.email}</span>
                 <span className="flex-1" />
                 {ban ? (
                   <Badge className="bg-tone-rose-badge text-destructive">

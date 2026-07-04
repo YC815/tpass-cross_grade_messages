@@ -22,7 +22,7 @@ export function WebhookForm() {
           name="name"
           required
           placeholder="名稱（例如：第一屆）"
-          className="w-48 flex-none"
+          className="w-full sm:w-48 sm:flex-none"
           disabled={pending}
         />
         <Input
@@ -30,10 +30,10 @@ export function WebhookForm() {
           type="url"
           required
           placeholder="https://chat.googleapis.com/v1/spaces/…"
-          className="flex-1 min-w-64 font-mono text-sm"
+          className="w-full sm:flex-1 sm:min-w-64 font-mono text-sm"
           disabled={pending}
         />
-        <Button type="submit" variant="primary" disabled={pending}>
+        <Button type="submit" variant="primary" disabled={pending} className="w-full sm:w-auto">
           <Plus className="h-4 w-4" /> 新增
         </Button>
       </div>

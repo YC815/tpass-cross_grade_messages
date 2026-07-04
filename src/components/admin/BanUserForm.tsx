@@ -20,17 +20,17 @@ export function BanUserForm({ sub }: { sub: string }) {
           type="number"
           min={1}
           placeholder="小時數（留空 = 永久）"
-          className="w-44 flex-none"
+          className="w-full sm:w-44 sm:flex-none"
           disabled={pending}
         />
         <Input
           name="reason"
           required
           placeholder="封禁原因（必填，會顯示給使用者）"
-          className="flex-1 min-w-48"
+          className="w-full sm:flex-1 sm:min-w-48"
           disabled={pending}
         />
-        <Button type="submit" variant="destructive" size="sm" disabled={pending}>
+        <Button type="submit" variant="destructive" size="sm" disabled={pending} className="w-full sm:w-auto">
           <Ban className="h-4 w-4" /> 封鎖
         </Button>
       </div>
