@@ -1,7 +1,9 @@
 // 學生傳訊頁：未登入導 SSO；封鎖/冷卻中顯示狀態卡，否則給傳訊表單。
+import Link from "next/link";
 import { redirect } from "next/navigation";
 import { Ban, Clock, MessagesSquare } from "lucide-react";
 import { getSession } from "@/lib/tpass-auth";
+import { isAdmin } from "@/config/admin";
 import { authConfig, loginUrlFor } from "@/config/auth";
 import { prisma } from "@/lib/db";
 import { getCooldownHours } from "@/lib/settings";
@@ -14,7 +16,7 @@ export default async function HomePage() {
   const session = await getSession();
   if (!session) redirect(loginUrlFor("/"));
 
-  const [status, cooldownHours, webhooks] = await Promise.all([
+  const [status, cooldownHours, webhooks, admin] = await Promise.all([
     prisma.userStatus.findUnique({ where: { sub: session.sub } }),
     getCooldownHours(),
     prisma.webhook.findMany({
@@ -22,6 +24,7 @@ export default async function HomePage() {
       orderBy: { createdAt: "asc" },
       select: { id: true, name: true },
     }),
+    isAdmin(session.email),
   ]);
 
   const ban = activeBan(status);
@@ -35,6 +38,14 @@ export default async function HomePage() {
             T<span className="text-primary">-</span>Msg
           </span>
           <div className="flex items-center gap-3">
+            {admin && (
+              <Link
+                href="/admin"
+                className="rounded-md border-2 border-foreground bg-primary px-2.5 py-1 font-mono text-[11px] font-bold text-primary-foreground shadow-[2px_2px_0_0_var(--color-foreground)] transition-all duration-200 hover:-translate-y-0.5 hover:shadow-[3px_3px_0_0_var(--color-foreground)]"
+              >
+                管理後台
+              </Link>
+            )}
             <span className="hidden sm:inline rounded-md border-2 border-foreground bg-card px-2 py-0.5 font-mono text-[11px] font-bold text-foreground">
               {session.name}
             </span>
