@@ -22,12 +22,8 @@ export async function saveSettingsAction(
   }
 
   const bannedWords = (formData.get("bannedWords") ?? "").toString();
-  const userGuidelines = (formData.get("userGuidelines") ?? "").toString().trim();
-  if (!userGuidelines) {
-    return { ok: false, error: "使用者守則不能是空的。" };
-  }
 
-  await saveSettings(cooldownHours, bannedWords, userGuidelines);
+  await saveSettings(cooldownHours, bannedWords);
   revalidatePath("/admin/settings");
   revalidatePath("/");
   return { ok: true };

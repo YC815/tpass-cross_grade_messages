@@ -6,7 +6,8 @@ import { getSession } from "@/lib/tpass-auth";
 import { isAdmin } from "@/config/admin";
 import { authConfig, loginUrlFor } from "@/config/auth";
 import { prisma } from "@/lib/db";
-import { getCooldownHours, getUserGuidelines } from "@/lib/settings";
+import { getCooldownHours } from "@/lib/settings";
+import { getGuidelinesMarkdown } from "@/lib/content";
 import { activeBan, cooldownRemainingMs, formatRemaining } from "@/lib/status";
 import { MAX_CONTENT_LENGTH } from "@/lib/constants";
 import { MessageForm } from "@/components/MessageForm";
@@ -56,7 +57,7 @@ export default async function HomePage({
   if (justLoggedOut) return <LoggedOutNotice />;
   if (!session) redirect(loginUrlFor("/"));
 
-  const [status, cooldownHours, webhooks, admin, guidelines] = await Promise.all([
+  const [status, cooldownHours, webhooks, admin] = await Promise.all([
     prisma.userStatus.findUnique({ where: { sub: session.sub } }),
     getCooldownHours(),
     prisma.webhook.findMany({
@@ -65,8 +66,8 @@ export default async function HomePage({
       select: { id: true, name: true },
     }),
     isAdmin(session.email),
-    getUserGuidelines(),
   ]);
+  const guidelines = getGuidelinesMarkdown();
 
   const ban = activeBan(status);
   const remainingMs = ban ? 0 : cooldownRemainingMs(status);
