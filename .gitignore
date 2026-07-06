@@ -40,3 +40,6 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# claude code worktrees（本機工具狀態，不是專案內容）
+.claude/worktrees/
