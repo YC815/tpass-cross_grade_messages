@@ -29,17 +29,15 @@ export async function addWebhookAction(
     return { ok: false, error: "這不是有效的網址。" };
   }
   if (parsed.protocol !== "https:") return { ok: false, error: "Webhook 必須是 https:// 開頭。" };
+  // 只收 Google Chat webhook：擋掉貼錯與「admin 帳號失守時把廣播導去任意主機」的 SSRF/外洩面。
+  if (parsed.hostname !== "chat.googleapis.com") {
+    return { ok: false, error: `Webhook 網域必須是 chat.googleapis.com（收到 ${parsed.hostname}）。` };
+  }
 
   await prisma.webhook.create({ data: { name, url, createdBy: session.email } });
   revalidatePath("/admin/webhooks");
   revalidatePath("/");
-
-  // Google Chat 以外的網域放行但提醒（可能只是打錯）。
-  const warning =
-    parsed.hostname === "chat.googleapis.com"
-      ? undefined
-      : `已新增，但網域是 ${parsed.hostname}，不是 chat.googleapis.com——確定沒貼錯？`;
-  return { ok: true, warning };
+  return { ok: true };
 }
 
 export async function toggleWebhookAction(formData: FormData): Promise<void> {
