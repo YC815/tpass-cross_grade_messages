@@ -6,11 +6,11 @@ This version has breaking changes — APIs, conventions, and file structure may 
 
 # tpass-cross_grade_messages（T-Msg 跨屆傳訊）
 
-學生填訊息 → 廣播到所有啟用中的 Google Chat webhook。生態系總覽見上層 `tschool/AGENTS.md`。
+學生填訊息 → 廣播到所有啟用中的 Google Chat webhook。生態系總覽、`services.json` 註冊表與 `tpass` CLI 見上層 **tpass-ops** repo（`AGENTS.md`、`docs/`）。
 
 ## 鐵律
 
-- **禁止 `npm run dev`**。檢查用 `npm run lint` + `npx tsc --noEmit`；跑起來用 `npm run start:https`（或頂層 `scripts/dev.sh msg`）。
+- **禁止 `npm run dev`**。檢查用 `npm run lint` + `npx tsc --noEmit`；跑起來用 `npm run start:https`（或上層 tpass-ops 的 `scripts/tpass dev msg`）。
 - UI 一律 light-only Neobrutalism + OKLCH，照 `tpass-portal/docs/design.md`；共用元件在 `src/components/ui/primitives.tsx`。
 - SSO 驗章照 `src/lib/tpass-auth.ts`，四鐵則（EdDSA 鎖定 / issuer / audience / exp）不可動；只碰公鑰，絕不 import auth 的私鑰。
 - 網域 / issuer / audience / DB 連線全 env 驅動（`src/config/auth.ts`、`.env`），不寫死。
