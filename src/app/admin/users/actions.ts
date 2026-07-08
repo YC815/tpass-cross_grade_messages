@@ -12,10 +12,10 @@ export interface BanResult {
 
 export async function resetCooldownAction(formData: FormData): Promise<void> {
   await requireAdmin("/admin/users");
-  const sub = formData.get("sub");
-  if (typeof sub === "string" && sub) {
+  const email = formData.get("email");
+  if (typeof email === "string" && email.trim()) {
     await prisma.userStatus
-      .update({ where: { sub }, data: { nextAllowedAt: null } })
+      .update({ where: { email: email.trim().toLowerCase() }, data: { nextAllowedAt: null } })
       .catch(() => {});
   }
   revalidatePath("/admin/users");
@@ -28,8 +28,10 @@ export async function banUserAction(
 ): Promise<BanResult> {
   const session = await requireAdmin("/admin/users");
 
-  const sub = formData.get("sub");
-  if (typeof sub !== "string" || !sub) return { ok: false, error: "缺少使用者。" };
+  const rawEmail = formData.get("email");
+  if (typeof rawEmail !== "string" || !rawEmail.trim())
+    return { ok: false, error: "缺少使用者。" };
+  const email = rawEmail.trim().toLowerCase();
 
   const reason = (formData.get("reason") ?? "").toString().trim();
   if (!reason) return { ok: false, error: "請填寫封禁原因。" };
@@ -47,7 +49,7 @@ export async function banUserAction(
 
   const updated = await prisma.userStatus
     .update({
-      where: { sub },
+      where: { email },
       data: { bannedAt: new Date(), banExpiresAt, banReason: reason, bannedBy: session.email },
     })
     .catch(() => null);
@@ -60,11 +62,11 @@ export async function banUserAction(
 
 export async function unbanUserAction(formData: FormData): Promise<void> {
   await requireAdmin("/admin/users");
-  const sub = formData.get("sub");
-  if (typeof sub === "string" && sub) {
+  const email = formData.get("email");
+  if (typeof email === "string" && email.trim()) {
     await prisma.userStatus
       .update({
-        where: { sub },
+        where: { email: email.trim().toLowerCase() },
         data: { bannedAt: null, banExpiresAt: null, banReason: null, bannedBy: null },
       })
       .catch(() => {});

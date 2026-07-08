@@ -58,7 +58,7 @@ export default async function HomePage({
   if (!session) redirect(loginUrlFor("/"));
 
   const [status, cooldownHours, webhooks, admin] = await Promise.all([
-    prisma.userStatus.findUnique({ where: { sub: session.sub } }),
+    prisma.userStatus.findUnique({ where: { email: session.email.trim().toLowerCase() } }),
     getCooldownHours(),
     prisma.webhook.findMany({
       where: { enabled: true },

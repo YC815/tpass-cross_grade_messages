@@ -41,11 +41,12 @@ model Message {
 }
 
 // 每個使用者一列的狀態：冷卻閘門 + 封鎖。
+// 身分鍵是 email（網域鎖定、驗證過的校園帳號，穩定且唯一）；sub 只是最後一次登入的 JWT sub，僅供顯示/稽核。
 // 冷卻：nextAllowedAt 為 null 或已過 = 可傳；送出時原子性寫入 now + cooldownHours。
 // 封鎖：bannedAt 非 null 即封鎖中；banExpiresAt null = 永久。
 model UserStatus {
-  sub           String    @id // JWT sub
-  email         String
+  sub           String    @id // 最後一次登入的 JWT sub（僅顯示/稽核用，非身分鍵）
+  email         String    @unique // 身分鍵：校園 email，冷卻/封鎖都以此為準
   name          String
   nextAllowedAt DateTime?
   bannedAt      DateTime?

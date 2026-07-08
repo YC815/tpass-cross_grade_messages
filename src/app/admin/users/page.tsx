@@ -47,7 +47,7 @@ export default async function AdminUsersPage({
           const remainingMs = cooldownRemainingMs(u, now);
           return (
             <div
-              key={u.sub}
+              key={u.email}
               className="rounded-2xl border-2 border-foreground bg-card p-4 shadow-[3px_3px_0_0_var(--color-foreground)]"
             >
               <div className="flex flex-wrap items-center gap-2">
@@ -80,7 +80,7 @@ export default async function AdminUsersPage({
               <div className="mt-3 flex flex-wrap items-center gap-2">
                 {remainingMs > 0 && (
                   <form action={resetCooldownAction}>
-                    <input type="hidden" name="sub" value={u.sub} />
+                    <input type="hidden" name="email" value={u.email} />
                     <button
                       type="submit"
                       className="inline-flex items-center gap-1.5 rounded-xl border-2 border-foreground bg-card px-3 py-1.5 text-sm font-bold shadow-[2px_2px_0_0_var(--color-foreground)] transition-all duration-200 hover:-translate-y-0.5 hover:shadow-[3px_3px_0_0_var(--color-foreground)]"
@@ -91,7 +91,7 @@ export default async function AdminUsersPage({
                 )}
                 {ban && (
                   <form action={unbanUserAction}>
-                    <input type="hidden" name="sub" value={u.sub} />
+                    <input type="hidden" name="email" value={u.email} />
                     <button
                       type="submit"
                       className="inline-flex items-center gap-1.5 rounded-xl border-2 border-foreground bg-card px-3 py-1.5 text-sm font-bold text-tone-green-text shadow-[2px_2px_0_0_var(--color-foreground)] transition-all duration-200 hover:-translate-y-0.5 hover:shadow-[3px_3px_0_0_var(--color-foreground)]"
@@ -108,7 +108,7 @@ export default async function AdminUsersPage({
                     封鎖這個使用者…
                   </summary>
                   <div className="mt-2">
-                    <BanUserForm sub={u.sub} />
+                    <BanUserForm email={u.email} />
                   </div>
                 </details>
               )}
