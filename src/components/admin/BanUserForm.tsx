@@ -5,7 +5,7 @@ import { Ban } from "lucide-react";
 import { banUserAction, type BanResult } from "@/app/admin/users/actions";
 import { Button, Input } from "@/components/ui/primitives";
 
-export function BanUserForm({ sub }: { sub: string }) {
+export function BanUserForm({ email }: { email: string }) {
   const [state, action, pending] = useActionState<BanResult | null, FormData>(
     banUserAction,
     null,
@@ -13,7 +13,7 @@ export function BanUserForm({ sub }: { sub: string }) {
 
   return (
     <form action={action} className="flex flex-col gap-2">
-      <input type="hidden" name="sub" value={sub} />
+      <input type="hidden" name="email" value={email} />
       <div className="flex flex-wrap gap-2">
         <Input
           name="hours"
