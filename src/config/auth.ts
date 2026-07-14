@@ -10,9 +10,6 @@ const REQUIRED = [
   "PORTAL_URL",
   "TPASS_SERVICE_ID",
   "JWT_ISSUER",
-  // v1 遷移期 fallback 用；v1 停發後可移除
-  "JWT_AUDIENCE",
-  "TPASS_COOKIE_NAME",
 ] as const;
 
 const missing = REQUIRED.filter((key) => !process.env[key]);
@@ -50,7 +47,4 @@ export const authConfig = {
   // v2：本服務自己的 host-only cookie（不設 Domain，別的子網域收不到）。
   ownCookieName: "tpass_token",
   cookieSecure: self.startsWith("https://"),
-  // v1 遷移期 fallback（全生態升級後移除）。
-  legacyAudience: process.env.JWT_AUDIENCE!,
-  legacyCookieName: process.env.TPASS_COOKIE_NAME!,
 } as const;
