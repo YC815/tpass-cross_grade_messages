@@ -10,7 +10,7 @@ This version has breaking changes — APIs, conventions, and file structure may 
 
 ## 鐵律
 
-- **禁止 `npm run dev`**。檢查用 `npm run lint` + `npx tsc --noEmit`；跑起來用 `npm run start:https`（或上層 tpass-ops 的 `scripts/tpass dev msg`）。
+- 本機跑 `pnpm dev`（已設好 HTTPS + `msg.lvh.me:3003` + `NODE_TLS_REJECT_UNAUTHORIZED=0`；憑證在 `$HOME/tpass-certs`）。檢查用 `pnpm lint` + `pnpm exec tsc --noEmit`。
 - UI 一律 light-only Neobrutalism + OKLCH，照 `tpass-portal/docs/design.md`；共用元件在 `src/components/ui/primitives.tsx`。
 - SSO 驗章照 `src/lib/tpass-auth.ts`，四鐵則（EdDSA 鎖定 / issuer / audience / exp）不可動；只碰公鑰，絕不 import auth 的私鑰。
 - 網域 / issuer / audience / DB 連線全 env 驅動（`src/config/auth.ts`、`.env`），不寫死。
@@ -22,4 +22,4 @@ This version has breaking changes — APIs, conventions, and file structure may 
 - 冷卻：`UserStatus.nextAllowedAt`（null/已過 = 可傳；送出時原子 `updateMany` 搶名額；重置 = 設 null）。
 - 封鎖：`bannedAt` 非 null 即封鎖，`banExpiresAt` null = 永久。
 - 全域設定：`Setting` key-value（`cooldownHours` / `bannedWords`），無 row 用預設值。
-- Schema 變更走 migration（`npm run db:migrate`），部署端 `deploy.sh` 會跑 `prisma migrate deploy`。
+- Schema 變更走 migration（`pnpm db:migrate`），部署端 `deploy.sh` 會跑 `prisma migrate deploy`。
