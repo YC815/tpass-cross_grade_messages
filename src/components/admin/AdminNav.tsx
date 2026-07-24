@@ -7,19 +7,18 @@ import {
   MessageSquareText,
   Settings,
   UserCog,
-  Users,
   Webhook,
   type LucideIcon,
 } from "lucide-react";
 
 type Item = { href: string; label: string; icon: LucideIcon; superAdminOnly?: boolean };
 
+// 成員名單管理已移至中央（auth 的 AUTH_GROUPS）；本服務後台不再有成員頁。
 const ITEMS: Item[] = [
   { href: "/admin", label: "訊息紀錄", icon: MessageSquareText },
   { href: "/admin/users", label: "使用者", icon: UserCog },
   { href: "/admin/webhooks", label: "Webhook", icon: Webhook },
   { href: "/admin/settings", label: "設定", icon: Settings },
-  { href: "/admin/members", label: "成員名單", icon: Users, superAdminOnly: true },
 ];
 
 function isActive(pathname: string | null, href: string) {

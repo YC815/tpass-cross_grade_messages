@@ -57,7 +57,7 @@ export default async function HomePage({
   if (justLoggedOut) return <LoggedOutNotice />;
   if (!session) redirect(loginUrlFor("/"));
 
-  const [status, cooldownHours, webhooks, admin] = await Promise.all([
+  const [status, cooldownHours, webhooks] = await Promise.all([
     prisma.userStatus.findUnique({ where: { email: session.email.trim().toLowerCase() } }),
     getCooldownHours(),
     prisma.webhook.findMany({
@@ -65,8 +65,8 @@ export default async function HomePage({
       orderBy: { createdAt: "asc" },
       select: { id: true, name: true },
     }),
-    isAdmin(session.email),
   ]);
+  const admin = isAdmin(session);
   const guidelines = getGuidelinesMarkdown();
 
   const ban = activeBan(status);

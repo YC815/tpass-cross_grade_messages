@@ -7,14 +7,6 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-// 管理員白名單（超管種子在 env SUPER_ADMIN_EMAILS，不進這張表）。
-model Admin {
-  id        String   @id @default(cuid())
-  email     String   @unique
-  addedBy   String
-  createdAt DateTime @default(now())
-}
-
 // Google Chat incoming webhook 清單，全由 admin UI 管理。
 // url 內含 key/token secret：不進 git、不進 log，UI 顯示要截斷。
 model Webhook {

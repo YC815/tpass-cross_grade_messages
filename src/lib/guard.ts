@@ -21,12 +21,12 @@ export async function requireSession(returnPath = "/"): Promise<TPassClaims> {
 
 export async function requireAdmin(returnPath = "/admin"): Promise<TPassClaims> {
   const session = await requireSession(returnPath);
-  if (!(await isAdmin(session.email))) throw new ForbiddenError();
+  if (!isAdmin(session)) throw new ForbiddenError();
   return session;
 }
 
 export async function requireSuperAdmin(returnPath = "/admin"): Promise<TPassClaims> {
   const session = await requireSession(returnPath);
-  if (!isSuperAdmin(session.email)) throw new ForbiddenError();
+  if (!isSuperAdmin(session)) throw new ForbiddenError();
   return session;
 }
